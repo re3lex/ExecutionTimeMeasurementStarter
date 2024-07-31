@@ -2,8 +2,7 @@ package org.example.executiontimemeasurement.service;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.apache.commons.lang3.StringUtils.right;
@@ -25,90 +24,111 @@ public class ExecTimeTrackerServiceImpl implements ExecTimeTrackerService {
   private static final String CSV_HEADER = "Depth;Trace point;Start;End;Duration, ms;Exception";
   private static final String CSV_ROW_TPL = "%s;\"%s\";%s;%s;%s;%s";
 
-  private final ThreadLocal<Integer> depth = ThreadLocal.withInitial(() -> 0);
-  private final ThreadLocal<List<Trace>> stack = ThreadLocal.withInitial(ArrayList::new);
+
+  private final ThreadLocal<Stack<Trace>> stack2 = ThreadLocal.withInitial(Stack::new);
+  private final ThreadLocal<Trace> rootTrace = new ThreadLocal<>();
 
   @Override
-  public Trace startTracking(String name) {
-    int currentDepth = depth.get();
-    Trace trace = new Trace(currentDepth, name);
+  public void startTracking(String name) {
+    Trace trace = new Trace(name);
     trace.setStart(System.currentTimeMillis());
-    stack.get().add(trace);
-    increaseDepth();
-    return trace;
+
+    if (rootTrace.get() == null) {
+      rootTrace.set(trace);
+    }
+    Stack<Trace> traces = stack2.get();
+    if (!traces.empty()) {
+      Trace parent = traces.peek();
+      parent.getChildren().add(trace);
+    }
+
+    traces.add(trace);
   }
 
   @Override
-  public void stopTracking(Trace trace) {
-    if (trace == null) {
-      log.error("Trace is not provided");
+  public void stopTracking(String name, boolean withError) {
+    Stack<Trace> traces = stack2.get();
+    if (traces.empty()) {
+      log.error("There is no current trace!");
+      return;
+    }
+
+    Trace trace = traces.pop();
+
+    if (!trace.getName().equals(name)) {
+      log.error("Name of current trace is not matching with provided name!");
       return;
     }
 
     trace.setEnd(System.currentTimeMillis());
+    trace.setFailed(withError);
+
     long duration = trace.getEnd() - trace.getStart();
-    log.trace("Depth {}. Executing {} took {}ms", trace.getDepth(), trace.getName(), duration);
-    decreaseDepth();
+    log.trace("Executing {} took {}ms", trace.getName(), duration);
   }
 
   @Override
   public void clear() {
-    stack.get().clear();
-    depth.set(0);
+    stack2.remove();
+    rootTrace.remove();
   }
 
   @Override
-  public int getDepth() {
-    return depth.get();
-  }
-
-  @Override
-  public List<Trace> getStack() {
-    return stack.get();
+  public Trace getRootTrace() {
+    return rootTrace.get();
   }
 
   @Override
   public String getStackAsAsciiTable() {
-    List<ExecTimeTrackerServiceImpl.Trace> stack = getStack();
-
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder("\n\n");
     sb.append(HEADER).append("\n");
     sb.append(DELIMITER).append("\n");
 
-    for (ExecTimeTrackerServiceImpl.Trace trace : stack) {
-      int depth = trace.getDepth();
-      String pad = repeat(" ", depth * 2);
-      String name = trace.getName();
-
-      if (name.length() + pad.length() > TRACE_POINT_WIDTH) {
-        name = right(trace.getName(), TRACE_POINT_WIDTH - pad.length());
-      }
-
-      String failedMark = trace.isFailed() ? HAS_ERROR_MARK : "";
-      long duration = trace.getEnd() - trace.getStart();
-
-      sb.append(TPL.formatted(pad + name, depth, duration, failedMark)).append("\n");
-    }
+    addLine(sb, rootTrace.get(), 0);
 
     return sb.toString();
   }
+
+  private void addLine(StringBuilder sb, Trace trace, int depth) {
+    String pad = repeat(" ", depth * 2);
+    String name = trace.getName();
+
+    if (name.length() + pad.length() > TRACE_POINT_WIDTH) {
+      name = right(trace.getName(), TRACE_POINT_WIDTH - pad.length());
+    }
+
+    String failedMark = trace.isFailed() ? HAS_ERROR_MARK : "";
+    long duration = trace.getEnd() - trace.getStart();
+
+    sb.append(TPL.formatted(pad + name, depth, duration, failedMark)).append("\n");
+
+    for (Trace child : trace.getChildren()) {
+      addLine(sb, child, depth + 1);
+    }
+  }
+
 
   @Override
   public String getStackAsCsv() {
     StringBuilder sb = new StringBuilder();
     sb.append(CSV_HEADER).append("\n");
 
-    List<ExecTimeTrackerServiceImpl.Trace> stack = getStack();
-    for (ExecTimeTrackerServiceImpl.Trace trace : stack) {
-      int depth = trace.getDepth();
-      long end = trace.getEnd();
-      long start = trace.getStart();
-      long duration = end - start;
-      String failedMark = trace.isFailed() ? "true" : "";
+    addCsvLine(sb, rootTrace.get(), 0);
 
-      sb.append(CSV_ROW_TPL.formatted(depth, trace.getName(), start, end, duration, failedMark)).append("\n");
-    }
     return sb.toString();
+  }
+
+  private void addCsvLine(StringBuilder sb, Trace trace, int depth) {
+    long end = trace.getEnd();
+    long start = trace.getStart();
+    long duration = end - start;
+    String failedMark = trace.isFailed() ? "true" : "";
+
+    sb.append(CSV_ROW_TPL.formatted(depth, trace.getName(), start, end, duration, failedMark)).append("\n");
+
+    for (Trace child : trace.getChildren()) {
+      addCsvLine(sb, child, depth + 1);
+    }
   }
 
   @Override
@@ -116,16 +136,4 @@ public class ExecTimeTrackerServiceImpl implements ExecTimeTrackerService {
     log.info(getStackAsAsciiTable());
   }
 
-  private void increaseDepth() {
-    depth.set(depth.get() + 1);
-  }
-
-  private void decreaseDepth() {
-    Integer currentDepth = depth.get();
-    if (currentDepth == 0) {
-      log.error("Depth is already zero. Cannot be decreased");
-    } else {
-      depth.set(currentDepth - 1);
-    }
-  }
 }

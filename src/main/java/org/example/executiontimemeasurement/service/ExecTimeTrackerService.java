@@ -4,16 +4,16 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public interface ExecTimeTrackerService {
 
-  default Trace startTracking(String name) {
-    return null;
+  default void startTracking(String name) {
   }
 
-  default void stopTracking(Trace trace) {
+  default void stopTracking(String name, boolean withError) {
 
   }
 
@@ -25,8 +25,8 @@ public interface ExecTimeTrackerService {
 
   }
 
-  default List<Trace> getStack() {
-    return Collections.emptyList();
+  default Trace getRootTrace() {
+    return null;
   }
 
   default String getStackAsAsciiTable() {
@@ -45,10 +45,11 @@ public interface ExecTimeTrackerService {
   @Setter
   @RequiredArgsConstructor
   class Trace {
-    private final int depth;
     private final String name;
     private long start;
     private long end;
     private boolean failed;
+
+    private List<Trace> children = new ArrayList<>();
   }
 }

@@ -8,7 +8,6 @@ public abstract class AbstractExecutionTracker {
 
   protected final String name;
   private final ExecTimeTrackerService trackerService;
-  private ExecTimeTrackerService.Trace trace;
 
   public AbstractExecutionTracker(String name, ExecTimeTrackerService trackerService) {
     this.name = name;
@@ -16,11 +15,10 @@ public abstract class AbstractExecutionTracker {
   }
 
   protected void start() {
-    this.trace = trackerService.startTracking(name);
+    trackerService.startTracking(name);
   }
 
   protected void finish(boolean withError) {
-    trace.setFailed(withError);
-    trackerService.stopTracking(trace);
+    trackerService.stopTracking(name, withError);
   }
 }
