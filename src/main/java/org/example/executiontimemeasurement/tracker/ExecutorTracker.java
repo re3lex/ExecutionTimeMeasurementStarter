@@ -1,7 +1,6 @@
 package org.example.executiontimemeasurement.tracker;
 
 import org.example.executiontimemeasurement.service.ExecutionTrackerService;
-import org.springframework.util.StopWatch;
 
 public class ExecutorTracker extends AbstractExecutionTracker {
 
@@ -10,13 +9,15 @@ public class ExecutorTracker extends AbstractExecutionTracker {
   }
 
   public void measure(Runnable runnable) {
-    StopWatch stopWatch = start();
+    start();
+    boolean withError = false;
     try {
       runnable.run();
-      finish(stopWatch, false);
     } catch (Exception e) {
-      finish(stopWatch, true);
+      withError = true;
       throw e;
+    } finally {
+      finish(withError);
     }
   }
 }

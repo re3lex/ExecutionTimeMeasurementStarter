@@ -1,7 +1,6 @@
 package org.example.executiontimemeasurement.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,32 +15,39 @@ public class ExecutionTrackerServiceImpl implements ExecutionTrackerService {
   private static final int DURATION_WIDTH = 12;
   private static final int HAS_ERROR_WIDTH = 16;
 
-  private static final String HAS_ERROR_MARK = "V" + repeat(" ", (HAS_ERROR_WIDTH / 2));
+  // ASCII table
   private static final String TPL = "|%-" + TRACE_POINT_WIDTH + "s | %" + DEPTH_WIDTH + "s | %" + DURATION_WIDTH + "s | %" + HAS_ERROR_WIDTH + "s|";
   private static final String DELIMITER = TPL.formatted(repeat("-", TRACE_POINT_WIDTH), repeat("-", DEPTH_WIDTH), repeat("-", DURATION_WIDTH), repeat("-", HAS_ERROR_WIDTH));
   private static final String HEADER = TPL.formatted("Trace point name", "Depth", "Duration, ms", "Exception thrown");
+  private static final String HAS_ERROR_MARK = "V" + repeat(" ", (HAS_ERROR_WIDTH / 2));
+
+  // CSV
+  private static final String CSV_HEADER = "Depth;Trace point;Start;End;Duration, ms;Exception";
+  private static final String CSV_ROW_TPL = "%s;\"%s\";%s;%s;%s;%s";
+
 
   private final ThreadLocal<Integer> depth = ThreadLocal.withInitial(() -> 0);
   private final ThreadLocal<List<Trace>> stack = ThreadLocal.withInitial(ArrayList::new);
 
   @Override
-  public int startTracking(String name) {
+  public Trace startTracking(String name) {
     int currentDepth = depth.get();
-    stack.get().add(new Trace(currentDepth, name));
+    Trace trace = new Trace(currentDepth, name);
+    trace.setStart(System.currentTimeMillis());
+    stack.get().add(trace);
     increaseDepth();
-    return stack.get().size() - 1;
+    return trace;
   }
 
   @Override
-  public void stopTracking(int idx, long duration, boolean withError) {
-    Trace trace = stack.get().get(idx);
+  public void stopTracking(Trace trace) {
     if (trace == null) {
-      log.error("No trace found for id {}", idx);
+      log.error("Trace is not provided");
       return;
     }
 
-    trace.setDuration(duration);
-    trace.setFailed(withError);
+    trace.setEnd(System.currentTimeMillis());
+    long duration = trace.getEnd() - trace.getStart();
     log.trace("Depth {}. Executing {} took {}ms", trace.getDepth(), trace.getName(), duration);
     decreaseDepth();
   }
@@ -75,10 +81,29 @@ public class ExecutionTrackerServiceImpl implements ExecutionTrackerService {
       }
 
       String failedMark = trace.isFailed() ? HAS_ERROR_MARK : "";
+      long duration = trace.getEnd() - trace.getStart();
 
-      sb.append(TPL.formatted(pad + name, depth, trace.getDuration(), failedMark)).append("\n");
+      sb.append(TPL.formatted(pad + name, depth, duration, failedMark)).append("\n");
     }
 
+    return sb.toString();
+  }
+
+  @Override
+  public String getStackAsCsv() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(CSV_HEADER).append("\n");
+
+    List<ExecutionTrackerServiceImpl.Trace> stack = getStack();
+    for (ExecutionTrackerServiceImpl.Trace trace : stack) {
+      int depth = trace.getDepth();
+      long end = trace.getEnd();
+      long start = trace.getStart();
+      long duration = end - start;
+      String failedMark = trace.isFailed() ? "true" : "";
+
+      sb.append(CSV_ROW_TPL.formatted(depth, trace.getName(), start, end, duration, failedMark)).append("\n");
+    }
     return sb.toString();
   }
 

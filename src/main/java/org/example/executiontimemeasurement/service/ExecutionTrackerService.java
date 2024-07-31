@@ -4,16 +4,17 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public interface ExecutionTrackerService {
 
-  default int startTracking(String name) {
-    return 0;
+  default Trace startTracking(String name) {
+    return null;
   }
 
-  default void stopTracking(int idx, long duration, boolean withError) {
+  default void stopTracking(Trace trace) {
 
   }
 
@@ -29,6 +30,10 @@ public interface ExecutionTrackerService {
     return null;
   }
 
+  default String getStackAsCsv() {
+    return null;
+  }
+
   default void printStack() {
 
   }
@@ -39,7 +44,8 @@ public interface ExecutionTrackerService {
   class Trace {
     private final int depth;
     private final String name;
-    private long duration;
+    private long start;
+    private long end;
     private boolean failed;
   }
 }

@@ -1,7 +1,6 @@
 package org.example.executiontimemeasurement.tracker;
 
 import org.example.executiontimemeasurement.service.ExecutionTrackerService;
-import org.springframework.util.StopWatch;
 
 public class ThrowingSupplierTracker<T> extends AbstractExecutionTracker {
 
@@ -10,20 +9,20 @@ public class ThrowingSupplierTracker<T> extends AbstractExecutionTracker {
   }
 
   public T measure(ThrowingSupplier<T> supplier) throws Throwable {
-    StopWatch stopWatch = start();
-    T result;
+    start();
+    boolean withError = false;
 
     try {
-      result = supplier.get();
-    } catch (Throwable e) {
-      finish(stopWatch, true);
+      return supplier.get();
+    } catch (Exception e) {
+      withError = true;
       throw e;
+    } finally {
+      finish(withError);
     }
-
-    finish(stopWatch, false);
-    return result;
   }
 
+  @FunctionalInterface
   public interface ThrowingSupplier<T> {
     T get() throws Throwable;
   }
