@@ -1,13 +1,11 @@
 package org.example.executiontimemeasurement.configuration;
 
-import org.example.executiontimemeasurement.advice.ExecTimeTrackerAdvice;
+import org.example.executiontimemeasurement.aop.ExecTimeTrackerAspect;
 import org.example.executiontimemeasurement.configuration.properties.ExecTimeTrackerProperties;
-import org.example.executiontimemeasurement.service.ExecutionTrackerService;
-import org.example.executiontimemeasurement.service.ExecutionTrackerServiceImpl;
-import org.example.executiontimemeasurement.tracker.ExecutionTrackerFactory;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.example.executiontimemeasurement.service.ExecTimeTrackerService;
+import org.example.executiontimemeasurement.service.ExecTimeTrackerServiceImpl;
+import org.example.executiontimemeasurement.tracker.ExecTimeTrackerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,12 +14,12 @@ import org.springframework.context.annotation.Configuration;
 public class ExecTimeTrackerConfiguration extends BaseExecTimeTrackerConfiguration {
 
   @Bean
-  public ExecTimeTrackerAdvice execTimeTrackerAdvice(ExecutionTrackerFactory executionTrackerFactory) {
-    return new ExecTimeTrackerAdvice(executionTrackerFactory);
+  public ExecTimeTrackerAspect execTimeTrackerAspect(ExecTimeTrackerFactory execTimeTrackerFactory, ExecTimeTrackerService trackerService, ExecTimeTrackerProperties properties) {
+    return new ExecTimeTrackerAspect(execTimeTrackerFactory, trackerService, properties);
   }
 
   @Bean
-  public ExecutionTrackerService executionTrackerService() {
-    return new ExecutionTrackerServiceImpl();
+  public ExecTimeTrackerService executionTrackerService() {
+    return new ExecTimeTrackerServiceImpl();
   }
 }

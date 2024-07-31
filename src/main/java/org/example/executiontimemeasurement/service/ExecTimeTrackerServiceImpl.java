@@ -9,7 +9,7 @@ import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.apache.commons.lang3.StringUtils.right;
 
 @Slf4j
-public class ExecutionTrackerServiceImpl implements ExecutionTrackerService {
+public class ExecTimeTrackerServiceImpl implements ExecTimeTrackerService {
   private static final int TRACE_POINT_WIDTH = 80;
   private static final int DEPTH_WIDTH = 5;
   private static final int DURATION_WIDTH = 12;
@@ -24,7 +24,6 @@ public class ExecutionTrackerServiceImpl implements ExecutionTrackerService {
   // CSV
   private static final String CSV_HEADER = "Depth;Trace point;Start;End;Duration, ms;Exception";
   private static final String CSV_ROW_TPL = "%s;\"%s\";%s;%s;%s;%s";
-
 
   private final ThreadLocal<Integer> depth = ThreadLocal.withInitial(() -> 0);
   private final ThreadLocal<List<Trace>> stack = ThreadLocal.withInitial(ArrayList::new);
@@ -59,19 +58,24 @@ public class ExecutionTrackerServiceImpl implements ExecutionTrackerService {
   }
 
   @Override
+  public int getDepth() {
+    return depth.get();
+  }
+
+  @Override
   public List<Trace> getStack() {
     return stack.get();
   }
 
   @Override
-  public String getStackAsString() {
-    List<ExecutionTrackerServiceImpl.Trace> stack = getStack();
+  public String getStackAsAsciiTable() {
+    List<ExecTimeTrackerServiceImpl.Trace> stack = getStack();
 
-    StringBuilder sb = new StringBuilder("\n\n");
+    StringBuilder sb = new StringBuilder();
     sb.append(HEADER).append("\n");
     sb.append(DELIMITER).append("\n");
 
-    for (ExecutionTrackerServiceImpl.Trace trace : stack) {
+    for (ExecTimeTrackerServiceImpl.Trace trace : stack) {
       int depth = trace.getDepth();
       String pad = repeat(" ", depth * 2);
       String name = trace.getName();
@@ -94,8 +98,8 @@ public class ExecutionTrackerServiceImpl implements ExecutionTrackerService {
     StringBuilder sb = new StringBuilder();
     sb.append(CSV_HEADER).append("\n");
 
-    List<ExecutionTrackerServiceImpl.Trace> stack = getStack();
-    for (ExecutionTrackerServiceImpl.Trace trace : stack) {
+    List<ExecTimeTrackerServiceImpl.Trace> stack = getStack();
+    for (ExecTimeTrackerServiceImpl.Trace trace : stack) {
       int depth = trace.getDepth();
       long end = trace.getEnd();
       long start = trace.getStart();
@@ -109,7 +113,7 @@ public class ExecutionTrackerServiceImpl implements ExecutionTrackerService {
 
   @Override
   public void printStack() {
-    log.info(getStackAsString());
+    log.info(getStackAsAsciiTable());
   }
 
   private void increaseDepth() {

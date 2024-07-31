@@ -1,9 +1,9 @@
 package org.example.executiontimemeasurement.service;
 
-public class ExecutionTrackerServiceStubImpl implements ExecutionTrackerService {
+public class ExecTimeTrackerServiceStubImpl implements ExecTimeTrackerService {
 
   @Override
-  public String getStackAsString() {
+  public String getStackAsAsciiTable() {
     return "Nothing to show: Execution tracker is disabled.";
   }
 

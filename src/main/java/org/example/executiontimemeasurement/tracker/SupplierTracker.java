@@ -1,12 +1,12 @@
 package org.example.executiontimemeasurement.tracker;
 
-import org.example.executiontimemeasurement.service.ExecutionTrackerService;
+import org.example.executiontimemeasurement.service.ExecTimeTrackerService;
 
 import java.util.function.Supplier;
 
 public class SupplierTracker<T> extends AbstractExecutionTracker {
 
-  public SupplierTracker(String name, ExecutionTrackerService trackerService) {
+  public SupplierTracker(String name, ExecTimeTrackerService trackerService) {
     super(name, trackerService);
   }
 

@@ -9,4 +9,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "exec-time-tracker")
 public class ExecTimeTrackerProperties {
   private boolean enabled;
+  private boolean printOnExit;
+  private PrintType printType = PrintType.TABLE;
+
+  public enum PrintType {
+    TABLE, CSV, BOTH
+  }
 }

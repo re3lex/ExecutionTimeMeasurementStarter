@@ -1,16 +1,16 @@
 package org.example.executiontimemeasurement.tracker;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.executiontimemeasurement.service.ExecutionTrackerService;
+import org.example.executiontimemeasurement.service.ExecTimeTrackerService;
 
 @Slf4j
 public abstract class AbstractExecutionTracker {
 
   protected final String name;
-  private final ExecutionTrackerService trackerService;
-  private ExecutionTrackerService.Trace trace;
+  private final ExecTimeTrackerService trackerService;
+  private ExecTimeTrackerService.Trace trace;
 
-  public AbstractExecutionTracker(String name, ExecutionTrackerService trackerService) {
+  public AbstractExecutionTracker(String name, ExecTimeTrackerService trackerService) {
     this.name = name;
     this.trackerService = trackerService;
   }

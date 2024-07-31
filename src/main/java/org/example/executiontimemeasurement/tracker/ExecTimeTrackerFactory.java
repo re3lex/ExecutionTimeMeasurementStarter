@@ -1,11 +1,11 @@
 package org.example.executiontimemeasurement.tracker;
 
 import lombok.RequiredArgsConstructor;
-import org.example.executiontimemeasurement.service.ExecutionTrackerService;
+import org.example.executiontimemeasurement.service.ExecTimeTrackerService;
 
 @RequiredArgsConstructor
-public class ExecutionTrackerFactory {
-  private final ExecutionTrackerService trackerService;
+public class ExecTimeTrackerFactory {
+  private final ExecTimeTrackerService trackerService;
 
   public <T> SupplierTracker<T> supplierTracker(String name) {
     return new SupplierTracker<>(name, trackerService);

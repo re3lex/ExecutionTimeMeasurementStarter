@@ -4,11 +4,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public interface ExecutionTrackerService {
+public interface ExecTimeTrackerService {
 
   default Trace startTracking(String name) {
     return null;
@@ -16,6 +15,10 @@ public interface ExecutionTrackerService {
 
   default void stopTracking(Trace trace) {
 
+  }
+
+  default int getDepth() {
+    return -1;
   }
 
   default void clear() {
@@ -26,7 +29,7 @@ public interface ExecutionTrackerService {
     return Collections.emptyList();
   }
 
-  default String getStackAsString() {
+  default String getStackAsAsciiTable() {
     return null;
   }
 
