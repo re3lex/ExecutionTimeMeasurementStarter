@@ -1,7 +1,7 @@
-package org.example.executiontimemeasurement.tracker;
+package com.re3lex.executiontimemeasurement.tracker;
 
 import lombok.RequiredArgsConstructor;
-import org.example.executiontimemeasurement.service.ExecTimeTrackerService;
+import com.re3lex.executiontimemeasurement.service.ExecTimeTrackerService;
 
 @RequiredArgsConstructor
 public class ExecTimeTrackerFactory {

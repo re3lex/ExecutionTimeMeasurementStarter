@@ -1,7 +1,7 @@
-package org.example.executiontimemeasurement.tracker;
+package com.re3lex.executiontimemeasurement.tracker;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.executiontimemeasurement.service.ExecTimeTrackerService;
+import com.re3lex.executiontimemeasurement.service.ExecTimeTrackerService;
 
 @Slf4j
 public abstract class AbstractExecutionTracker {

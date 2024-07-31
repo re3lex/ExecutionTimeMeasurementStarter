@@ -1,4 +1,4 @@
-package org.example.executiontimemeasurement.annotation;
+package com.re3lex.executiontimemeasurement.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

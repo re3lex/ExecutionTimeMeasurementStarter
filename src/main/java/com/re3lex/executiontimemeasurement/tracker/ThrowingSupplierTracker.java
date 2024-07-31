@@ -1,6 +1,6 @@
-package org.example.executiontimemeasurement.tracker;
+package com.re3lex.executiontimemeasurement.tracker;
 
-import org.example.executiontimemeasurement.service.ExecTimeTrackerService;
+import com.re3lex.executiontimemeasurement.service.ExecTimeTrackerService;
 
 public class ThrowingSupplierTracker<T> extends AbstractExecutionTracker {
 

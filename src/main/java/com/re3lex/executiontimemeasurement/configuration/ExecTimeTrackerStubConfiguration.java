@@ -1,7 +1,7 @@
-package org.example.executiontimemeasurement.configuration;
+package com.re3lex.executiontimemeasurement.configuration;
 
-import org.example.executiontimemeasurement.service.ExecTimeTrackerService;
-import org.example.executiontimemeasurement.service.ExecTimeTrackerServiceStubImpl;
+import com.re3lex.executiontimemeasurement.service.ExecTimeTrackerService;
+import com.re3lex.executiontimemeasurement.service.ExecTimeTrackerServiceStubImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

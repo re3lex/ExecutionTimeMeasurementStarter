@@ -1,4 +1,4 @@
-package org.example.executiontimemeasurement.aop;
+package com.re3lex.executiontimemeasurement.aop;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,11 +6,11 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.example.executiontimemeasurement.annotation.TrackExecTime;
-import org.example.executiontimemeasurement.configuration.properties.ExecTimeTrackerProperties;
-import org.example.executiontimemeasurement.service.ExecTimeTrackerService;
-import org.example.executiontimemeasurement.tracker.ExecTimeTrackerFactory;
-import org.example.executiontimemeasurement.tracker.ThrowingSupplierTracker;
+import com.re3lex.executiontimemeasurement.annotation.TrackExecTime;
+import com.re3lex.executiontimemeasurement.configuration.properties.ExecTimeTrackerProperties;
+import com.re3lex.executiontimemeasurement.service.ExecTimeTrackerService;
+import com.re3lex.executiontimemeasurement.tracker.ExecTimeTrackerFactory;
+import com.re3lex.executiontimemeasurement.tracker.ThrowingSupplierTracker;
 
 import java.lang.reflect.Method;
 
@@ -23,7 +23,7 @@ public class ExecTimeTrackerAspect {
   private final ExecTimeTrackerProperties properties;
   private final ThreadLocal<Boolean> facedFirstAnnotation = ThreadLocal.withInitial(() -> false);
 
-  @Around("@annotation(org.example.executiontimemeasurement.annotation.TrackExecTime)")
+  @Around("@annotation(com.re3lex.executiontimemeasurement.annotation.TrackExecTime)")
   public Object executionTime(ProceedingJoinPoint point) throws Throwable {
     TrackExecTime trackExecTime = getTrackExecTime(point);
 

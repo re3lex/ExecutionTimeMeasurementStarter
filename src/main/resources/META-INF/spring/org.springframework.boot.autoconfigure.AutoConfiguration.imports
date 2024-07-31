@@ -1,2 +1,2 @@
-org.example.executiontimemeasurement.configuration.ExecTimeTrackerConfiguration
-org.example.executiontimemeasurement.configuration.ExecTimeTrackerStubConfiguration
+com.re3lex.executiontimemeasurement.configuration.ExecTimeTrackerConfiguration
+com.re3lex.executiontimemeasurement.configuration.ExecTimeTrackerStubConfiguration

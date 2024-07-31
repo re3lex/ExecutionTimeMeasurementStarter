@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.2</version>
+    <version>3.2.4</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
-  <groupId>org.example</groupId>
+  <groupId>com.re3lex</groupId>
   <artifactId>exec-time-measurement-starter</artifactId>
   <version>1.0.0</version>
 

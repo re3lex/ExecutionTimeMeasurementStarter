@@ -1,4 +1,4 @@
-package org.example.executiontimemeasurement.configuration.properties;
+package com.re3lex.executiontimemeasurement.configuration.properties;
 
 import lombok.Getter;
 import lombok.Setter;

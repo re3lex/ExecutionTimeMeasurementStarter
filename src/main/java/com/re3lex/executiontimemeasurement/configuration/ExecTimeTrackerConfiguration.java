@@ -1,10 +1,10 @@
-package org.example.executiontimemeasurement.configuration;
+package com.re3lex.executiontimemeasurement.configuration;
 
-import org.example.executiontimemeasurement.aop.ExecTimeTrackerAspect;
-import org.example.executiontimemeasurement.configuration.properties.ExecTimeTrackerProperties;
-import org.example.executiontimemeasurement.service.ExecTimeTrackerService;
-import org.example.executiontimemeasurement.service.ExecTimeTrackerServiceImpl;
-import org.example.executiontimemeasurement.tracker.ExecTimeTrackerFactory;
+import com.re3lex.executiontimemeasurement.aop.ExecTimeTrackerAspect;
+import com.re3lex.executiontimemeasurement.configuration.properties.ExecTimeTrackerProperties;
+import com.re3lex.executiontimemeasurement.service.ExecTimeTrackerService;
+import com.re3lex.executiontimemeasurement.service.ExecTimeTrackerServiceImpl;
+import com.re3lex.executiontimemeasurement.tracker.ExecTimeTrackerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

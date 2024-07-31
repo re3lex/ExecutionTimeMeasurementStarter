@@ -1,4 +1,4 @@
-package org.example.executiontimemeasurement.service;
+package com.re3lex.executiontimemeasurement.service;
 
 import lombok.extern.slf4j.Slf4j;
 
